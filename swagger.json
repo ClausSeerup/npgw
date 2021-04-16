@@ -12,7 +12,7 @@ paths:
     post:
       tags:
       - npgw
-      summary: Creates a port in request
+      summary: Creates a port in request.
       description: Creates a port in request
       parameters:
       - name: appkey
