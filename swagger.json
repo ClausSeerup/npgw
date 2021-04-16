@@ -1,0 +1,124 @@
+openapi: 3.0.1
+info:
+  title: NPGW
+  description: NPGW...   
+  version: 1.0.0
+servers:
+- url: https://apigatewaydev.telenor.dk/npgw
+
+
+paths:
+  /import:
+    post:
+      tags:
+      - npgw
+      summary: Creates a port in request
+      description: Creates a port in request
+      parameters:
+      - name: appkey
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000050101"
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000000001202102271680434082"
+      requestBody:
+        description: Data for import request
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/PortInRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: portInRequest
+  /order/{telephoneNumber}:
+    get:
+      tags:
+      - npgw
+      summary: Gets ongoing import
+      description: Gets ongoing import
+      parameters:
+      - name: telephoneNumber
+        in: path
+        description: Telephone number for ongoing import
+        required: true
+        schema:
+          type: string
+      - name: appkey
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000050101"
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000000001202102271680434082"
+      responses:
+        200:
+          description: Success
+          content: {}
+
+
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes 
+
+
+  schemas:
+    PortInRequest:
+      allOf:
+      - type: object
+        properties:
+          OrderId:
+            type: string
+            default: "1234567905"
+          ICC:
+            type: string
+            default: "8945020200014376867"
+          RecipientServiceOperator:
+            type: string
+            default: "01015"
+          TelephoneNumber:
+            type: string
+            default: "59000920"
+          Comment:
+            type: string
+            default: my comment
+          RequestedExecutionDate:
+            type: string
+            default: "20220101"
+    Error:
+      allOf:
+      - type: object
+        properties:
+          name:
+            type: string
+          defaultRole:
+            type: boolean
+            readOnly: true
+          tenantId:
+            type: integer
+            format: int64
+          permissions:
+            type: array
+            items:
+              type: string
+
+# 2) Apply the security globally to all operations
+security:
+  - bearerAuth: []         # use the same name as above
+              
