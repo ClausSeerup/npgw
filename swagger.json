@@ -8,6 +8,7 @@ servers:
 
 
 paths:
+  
   /auth:
     post:
       security: []
@@ -72,6 +73,7 @@ paths:
           description: Success
           content: {}
       x-codegen-request-body-name: portInRequest
+  
   /order/{telephoneNumber}:
     get:
       tags:
@@ -110,7 +112,7 @@ components:
       description: See 
       flows: 
         clientCredentials: 
-          tokenUrl: https://apigatewaydev.telenor.dk/npgw/auth?grant_type=client_credentials
+          tokenUrl: npgw/auth?grant_type=client_credentials
           scopes: {} 
 
 
@@ -138,23 +140,7 @@ components:
           RequestedExecutionDate:
             type: string
             default: "20220101"
-    Error:
-      allOf:
-      - type: object
-        properties:
-          name:
-            type: string
-          defaultRole:
-            type: boolean
-            readOnly: true
-          tenantId:
-            type: integer
-            format: int64
-          permissions:
-            type: array
-            items:
-              type: string
-
+   
 
 #Apply the security globally to all operations
 security:
