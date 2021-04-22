@@ -112,7 +112,7 @@ components:
       description: See 
       flows: 
         clientCredentials: 
-          tokenUrl: http://apigatewaydev.telenor.dk:9001/npgw/auth
+          tokenUrl: https://apigatewaydev.telenor.dk/npgw/auth?grant_type=client_credentials
           scopes: {} 
 
 
