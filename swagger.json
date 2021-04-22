@@ -8,10 +8,41 @@ servers:
 
 
 paths:
+  /auth:
+    post:
+      tags:
+      - Authentication
+      summary: Get access token.
+      description: ...
+      parameters:
+      - name: appkey
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000050101"
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000000001202102271680434082"
+      requestBody:
+        description: Data for import request
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/PortInRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: portInRequest
   /import:
     post:
       tags:
-      - npgw
+      - NPGW
       summary: Creates a port in request.
       description: Creates a port in request
       parameters:
@@ -42,7 +73,7 @@ paths:
   /order/{telephoneNumber}:
     get:
       tags:
-      - npgw
+      - NPGW
       summary: Gets ongoing import
       description: Gets ongoing import
       parameters:
@@ -76,6 +107,14 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT    # optional, arbitrary value for documentation purposes 
+    oAuth2ClientCredentials:
+      type: oauth2
+      description: See 
+      flows: 
+        clientCredentials: 
+          tokenUrl: http://apigatewaydev.telenor.dk:9001/npgw/auth
+          scopes: {} 
+
 
 
   schemas:
