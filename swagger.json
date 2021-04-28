@@ -10,12 +10,20 @@ servers:
 paths:
   /auth:
     post:
-      security: []
+      security: 
+        - basicAuth: []
       tags:
       - Authentication
       summary: Get access token.
       description: ...
       parameters:
+      - name: grant_type
+        in: query
+        description: Telephone number for ongoing import
+        required: true
+        schema:
+          type: string
+          default: "client_credentials"
       - name: appkey
         in: header
         required: true
@@ -40,6 +48,8 @@ paths:
 
   /import:
     post:
+      security: 
+        - oAuth2ClientCredentials: []
       tags:
       - NPGW
       summary: Create Import
@@ -82,6 +92,8 @@ paths:
 
   /order/{telephoneNumber}:
     get:
+      security: 
+        - oAuth2ClientCredentials: []
       tags:
       - NPGW
       summary: Get Order
@@ -123,6 +135,8 @@ paths:
 
   /number/info/{telephoneNumber}:
     get:
+      security: 
+        - oAuth2ClientCredentials: []
       tags:
       - NPGW
       summary: Get Number Info
@@ -164,6 +178,8 @@ paths:
 
   /number/active/{telephoneNumber}:
     get:
+      security: 
+        - oAuth2ClientCredentials: []
       tags:
       - NPGW
       summary: ???
@@ -209,7 +225,9 @@ components:
         clientCredentials: 
           tokenUrl: npgw/auth?grant_type=client_credentials
           scopes: {} 
-
+    basicAuth:
+      type: http
+      scheme: basic
 
 
   schemas:
@@ -354,13 +372,11 @@ components:
               description:
                 type: string
                 default: "<error description from backend>"
+                description: Error description from backend
               code:
                 type: string
                 default: "<error code from backend>"
+                description: Error code from backend
 
 
 
-#Apply the security globally to all operations
-security:
-  - oAuth2ClientCredentials: []
-              
