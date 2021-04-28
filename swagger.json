@@ -320,21 +320,28 @@ components:
               SO:
                 type: string
                 default: "01015"
+                description:  Service Operator
               MO:
                 type: string
                 default: "01015"
+                description:  Network Operator
               RH:
                 type: string
                 default: "01015"
+                description:  Range Holder
               RI:
                 type: integer
                 default: 2211
+                description:  Routing Info
               CI:
                 type: integer
                 default: 2211
+                description:  Charge Info
               NumberType:
                 type: string
                 default: "GSM"
+                enum: ["FIXED", "GSM"]
+                description:  Number Type
 
 
     Fault:
