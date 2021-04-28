@@ -8,7 +8,6 @@ servers:
 
 
 paths:
-  
   /auth:
     post:
       security: []
@@ -29,25 +28,22 @@ paths:
         schema:
           type: string
           default: "8000000001202102271680434082"
-      requestBody:
-        description: Data for import request
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/PortInRequest'
-        required: true
       responses:
         200:
           description: Success
-          content: {}
-      x-codegen-request-body-name: portInRequest
-  
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/GetAccessTokenResponse'
+        401:
+          description: Unauthorized
+
   /import:
     post:
       tags:
       - NPGW
-      summary: This method will create a new import order.
-      description: Implements SOAP service PortInRequestDK
+      summary: Create Import
+      description: This method will create a new import order. Implements SOAP service PortInRequestDK
       parameters:
       - name: appkey
         in: header
@@ -64,22 +60,32 @@ paths:
       requestBody:
         description: Data for import request
         content:
-          '*/*':
+          application/json:
             schema:
-              $ref: '#/components/schemas/PortInRequest'
+              $ref: '#/components/schemas/CreateImportRequest'
         required: true
       responses:
         200:
           description: Success
-          content: {}
-      x-codegen-request-body-name: portInRequest
-  
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateImportResponse'
+        401: 
+          description: Unauthorized
+        500:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fault'
+
   /order/{telephoneNumber}:
     get:
       tags:
       - NPGW
-      summary: Gets ongoing number porting
-      description: Implements SOAP service QryOngoingPortOrder
+      summary: Get Order
+      description: Gets ongoing number porting. Implements SOAP service QryOngoingPortOrder
       parameters:
       - name: telephoneNumber
         in: path
@@ -102,14 +108,25 @@ paths:
       responses:
         200:
           description: Success
-          content: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderResponse'
+        401: 
+          description: Unauthorized
+        500:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fault'
 
   /number/info/{telephoneNumber}:
     get:
       tags:
       - NPGW
-      summary: ???
-      description: Implements SOAP service GetNumberInfo
+      summary: Get Number Info
+      description: ???. Implements SOAP service GetNumberInfo
       parameters:
       - name: telephoneNumber
         in: path
@@ -132,7 +149,18 @@ paths:
       responses:
         200:
           description: Success
-          content: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetNumberInfoResponse'
+        401: 
+          description: Unauthorized
+        500:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fault'
 
   /number/active/{telephoneNumber}:
     get:
@@ -166,6 +194,13 @@ paths:
 
 
 components:
+  responses:
+    Fault:
+      description: Failure
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Fault'
   securitySchemes:
     oAuth2ClientCredentials:
       type: oauth2
@@ -178,31 +213,147 @@ components:
 
 
   schemas:
-    PortInRequest:
+    CreateImportRequest:
       allOf:
       - type: object
+        required: [OrderId, RecipientServiceOperator, TelephoneNumber]
         properties:
-          OrderId:
+          OrderId: 
             type: string
             default: "1234567905"
+            description: xxx
           ICC:
             type: string
             default: "8945020200014376867"
+            description: xxx
           RecipientServiceOperator:
             type: string
             default: "01015"
+            description: xxx
           TelephoneNumber:
             type: string
             default: "59000920"
+            description: xxx
           Comment:
             type: string
-            default: my comment
+            default: "my comment"
+            description: xxx
           RequestedExecutionDate:
             type: string
             default: "20220101"
+            description: xxx
    
+    CreateImportResponse:
+      allOf:
+      - type: object
+        properties:
+          ResponseBody:
+            type: object
+            properties:
+              NewElement:
+                type: string
+                default: "NULL"
+
+    GetAccessTokenResponse:
+      allOf:
+      - type: object
+        properties:
+          refresh_token_expires_in:
+            type: string
+          api_product_list:
+            type: string
+          api_product_list_json:
+            type: string
+          organization_name:
+            type: string
+          token_type:
+            type: string
+          issued_at:
+            type: string
+          client_id:
+            type: string
+          access_token:
+            type: string
+            default: "<access token to be used>"
+          application_name:
+            type: string
+          scope:
+            type: string
+          expires_in:
+            type: string
+            default: "<period in seconds for how long the access token is valid>"
+          refresh_count:
+            type: string
+          status:
+            type: string
+
+    GetOrderResponse:
+      allOf:
+      - type: object
+        properties:
+          ResponseBody:
+            type: object
+            properties:
+              OngoingState:
+                type: integer
+                default: 1
+              PortData:
+                type: object
+                properties:
+                  RecipientServiceOperator:
+                    type: string
+                    default: "01015"
+                  OriginatingOrderNumber:
+                    type: string
+                    default: "01015202103240275055"
+                  OchOrderNumber:
+                    type: integer
+                    default: 200000000802
+
+    GetNumberInfoResponse:
+      allOf:
+      - type: object
+        properties:
+          ResponseBody:
+            type: object
+            properties:
+              SO:
+                type: string
+                default: "01015"
+              MO:
+                type: string
+                default: "01015"
+              RH:
+                type: string
+                default: "01015"
+              RI:
+                type: integer
+                default: 2211
+              CI:
+                type: integer
+                default: 2211
+              NumberType:
+                type: string
+                default: "GSM"
+
+
+    Fault:
+      allOf:
+      - type: object
+        properties:
+          fault:
+            type: object
+            properties:
+              description:
+                type: string
+                default: "<error description from backend>"
+              code:
+                type: string
+                default: "<error code from backend>"
+
+
 
 #Apply the security globally to all operations
 security:
-  - oAuth2ClientCredentials: []         # use the same name as above
+  - oAuth2ClientCredentials: []
               
