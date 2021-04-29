@@ -315,18 +315,23 @@ components:
               OngoingState:
                 type: integer
                 default: 1
+                enum: [0, 1]
+                description:  0=ongoing order not present, 1=ongoing order present
               PortData:
                 type: object
                 properties:
                   RecipientServiceOperator:
                     type: string
                     default: "01015"
+                    description: xxx
                   OriginatingOrderNumber:
                     type: string
                     default: "01015202103240275055"
+                    description: xxx
                   OchOrderNumber:
                     type: integer
                     default: 200000000802
+                    description: xxx
 
     GetNumberInfoResponse:
       allOf:
