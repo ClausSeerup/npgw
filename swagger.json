@@ -239,27 +239,31 @@ components:
           OrderId: 
             type: string
             default: "1234567905"
-            description: xxx
+            description: Unique order ID issued by the operator CRM system. NPGW will internally map this order ID to OriginatingOrderNumber that is issued by NPGW to OCH.
+          CustomerId: 
+            type: string
+            default: "1234567905"
+            description: End-user customer ID at the Donor operator – used for FIXED.
           ICC:
             type: string
             default: "8945020200014376867"
-            description: xxx
+            description: End-user SIM card number at the Donor operator - used for MOBILE.
           RecipientServiceOperator:
             type: string
             default: "01015"
-            description: xxx
+            description: Identification of the Recipient Service Operator.
           TelephoneNumber:
             type: string
             default: "59000920"
-            description: xxx
+            description: Telephone number or main number for a type II number series.
           Comment:
             type: string
-            default: "my comment"
-            description: xxx
+            default: "My comment"
+            description: Comment object used for testing and tracking purposes.
           RequestedExecutionDate:
             type: string
             default: "20220101"
-            description: xxx
+            description: The date that the recipient operator wants the porting to take place. [YYYYMMDD] 
    
     CreateImportResponse:
       allOf:
@@ -382,6 +386,8 @@ components:
                 type: string
                 default: "<error code from backend>"
                 description: Error code from backend
+
+
 
 
 
