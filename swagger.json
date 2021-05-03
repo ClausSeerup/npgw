@@ -53,7 +53,7 @@ paths:
       tags:
       - NPGW
       summary: Create Import
-      description: This method will create a new import order. Implements SOAP service PortInRequestDK
+      description: This method will create a new port-in order in NP gateway and based on that NP gateway will send a NP create to OCH.
       parameters:
       - name: appkey
         in: header
