@@ -51,7 +51,7 @@ paths:
       security: 
         - oAuth2ClientCredentials: []
       tags:
-      - NPGW
+      - Import
       summary: Create Import
       description: This method will create a new port-in order in NP gateway and based on that NP gateway will send a NP create to OCH.
       parameters:
@@ -89,13 +89,269 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Fault'
+  /import/{orderId}:
+    delete:
+      security: 
+        - oAuth2ClientCredentials: []
+      tags:
+      - Import
+      summary: Cancel Import
+      description: The service will cancel the specified port-in order. To be used if the customer cancels the porting, then NP Gateway will send NP Cancel to OCH.
+      parameters:
+      - name: appkey
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000050101"
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000000001202102271680434082"
+      - name: orderId
+        in: path
+        description: Original order ID – from import request - issued by the operator CRM system.
+        required: true
+        schema:
+          type: string
+          default: "7782546895648"
+      - name: TelephoneNumber
+        in: query
+        description: Telephone number from import request.
+        required: true
+        schema:
+          type: string
+          default: "60501234"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateImportResponse'
+        401: 
+          description: Unauthorized
+        500:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fault'
+
+    put:
+      security: 
+        - oAuth2ClientCredentials: []
+      tags:
+      - Import
+      summary: Complete Import
+      description: When the operator has activated the port-in number in the network, this service is called to notify NP Gateway. NP Gateway will send NP Complete to OCH.
+      parameters:
+      - name: appkey
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000050101"
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000000001202102271680434082"
+      - name: orderId
+        in: path
+        description: Original order ID – from import request - issued by the operator CRM system.
+        required: true
+        schema:
+          type: string
+          default: "7782546895648"
+      requestBody:
+        description: Data for import request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteImportRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateImportResponse'
+        401: 
+          description: Unauthorized
+        500:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fault'
+
+  /export/{orderId}:
+    put:
+      security: 
+        - oAuth2ClientCredentials: []
+      tags:
+      - Export
+      summary: Respond Export
+      description: This service is used for response back to recipient operator – if export request is confirmed or rejected. NPGW will forward this reply to OCH/recipient operator.
+      parameters:
+      - name: appkey
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000050101"
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000000001202102271680434082"
+      - name: orderId
+        in: path
+        description: Original order ID – from import request - issued by the operator CRM system.
+        required: true
+        schema:
+          type: string
+          default: "7782546895648"
+
+      requestBody:
+        description: Data for import request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RespondExportRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateImportResponse'
+        401: 
+          description: Unauthorized
+        500:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fault'
+
+  /export/{orderId}/complete:
+    put:
+      security: 
+        - oAuth2ClientCredentials: []
+      tags:
+      - Export
+      summary: Complete Export
+      description: This service is used by the operator to inform NPGW, when exported number has been successfully terminated in own systems. NPGW will based on this information update close NPGW order flow.
+      parameters:
+      - name: appkey
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000050101"
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000000001202102271680434082"
+      - name: orderId
+        in: path
+        description: Original order ID – from import request - issued by the operator CRM system.
+        required: true
+        schema:
+          type: string
+          default: "7782546895648"
+      requestBody:
+        description: Data for import request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteExportRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateImportResponse'
+        401: 
+          description: Unauthorized
+        500:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fault'
+
+  /export/{orderId}/confirmdate:
+    put:
+      security: 
+        - oAuth2ClientCredentials: []
+      tags:
+      - Export
+      summary: Modify Confirm Date
+      description: This method can be used if the operator is an ISP donor operator in a flow, and want to modify ConfirmDate.
+      parameters:
+      - name: appkey
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000050101"
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000000001202102271680434082"
+      - name: orderId
+        in: path
+        description: Original order ID – from import request - issued by the operator CRM system.
+        required: true
+        schema:
+          type: string
+          default: "7782546895648"
+      requestBody:
+        description: Data for import request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModifyConfirmdateRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateImportResponse'
+        401: 
+          description: Unauthorized
+        500:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fault'
+
+
 
   /order/{telephoneNumber}:
     get:
       security: 
         - oAuth2ClientCredentials: []
       tags:
-      - NPGW
+      - Order
       summary: Get Order
       description: Gets ongoing number porting. Implements SOAP service QryOngoingPortOrder
       parameters:
@@ -138,7 +394,7 @@ paths:
       security: 
         - oAuth2ClientCredentials: []
       tags:
-      - NPGW
+      - Number
       summary: Get Number Info
       description: ???. Implements SOAP service GetNumberInfo
       parameters:
@@ -176,21 +432,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fault'
 
-  /number/active/{telephoneNumber}:
-    get:
+  /number/return:
+    post:
       security: 
         - oAuth2ClientCredentials: []
       tags:
-      - NPGW
-      summary: ???
-      description: Implements SOAP service ActiveNumber
+      - Number
+      summary: Return Number
+      description: This service will return a number to the range holder via OCH.
       parameters:
-      - name: telephoneNumber
-        in: path
-        description: Telephone number for ongoing import
-        required: true
-        schema:
-          type: string
       - name: appkey
         in: header
         required: true
@@ -203,11 +453,71 @@ paths:
         schema:
           type: string
           default: "8000000001202102271680434082"
+      requestBody:
+        description: Data for import request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReturnNumberRequest'
+        required: true
       responses:
         200:
           description: Success
-          content: {}
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateImportResponse'
+        401: 
+          description: Unauthorized
+        500:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fault'
+  /number/range:
+    post:
+      security: 
+        - oAuth2ClientCredentials: []
+      tags:
+      - Number
+      summary: Range Update
+      description: This service is used to create, delete or change the range information about a range of telephone numbers, then NP gateway will send NP Range Update to OCH.
+      parameters:
+      - name: appkey
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000050101"
+      - name: transactionId
+        in: header
+        required: true
+        schema:
+          type: string
+          default: "8000000001202102271680434082"
+      requestBody:
+        description: Data for import request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RangeUpdateRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateImportResponse'
+        401: 
+          description: Unauthorized
+        500:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fault'
 
 components:
   responses:
@@ -275,6 +585,201 @@ components:
               NewElement:
                 type: string
                 default: "NULL"
+
+    CompleteImportRequest:
+      allOf:
+      - type: object
+        required: [TelephoneNumber, PortingCase]
+        properties:
+          TelephoneNumber:
+            type: string
+            default: "60501234"
+            description: Telephone number from import request.
+          PortingCase:
+            type: string
+            default: "PortedNonGeo"
+            enum: ["PortedNonGeo", "NonPorted"]
+            description:  Indicates which signalling scenario is to be used, when sending calls to the ported number. 
+
+    RespondExportRequest:
+      allOf:
+      - type: object
+        required: [OrderId, ResponseType]
+        properties:
+          OrderId: 
+            type: string
+            default: "01015202103211207420"
+            description: OCH OriginatingOrderNumber.
+          ResponseType:
+            type: string
+            default: "Confirm"
+            enum: ["Confirm", "Reject"]
+            description: Information if export requst is confirmed or rejected. 
+          ConfirmedExecutionDate:
+            type: string
+            default: ""
+            description: Information about the confirmed date that the porting will take place yyyymmddhhmmss.
+          ConfirmationStatus:
+            type: number
+            enum: [1, 2, 3, 4]
+            description: Explanation why RequestedExecutionDate cannot be kept. 
+              <br/>1 - To early according to Rules & Procedures. 
+              <br/>2 - Termination period is violated. 
+              <br/>3 - Contract period is violated. 
+              <br/>4 - Date moved due to excessive load.
+          RejectCode:
+            type: number
+            default: ""
+            description: Description of the rejection – reject code description can be found at online.och.dk. Must be set if ResponseType is Reject
+          RejectDesc:
+            type: string
+            default: ""
+            description: VIZI forstår ikke denne - spørg ChenXi.
+
+    CompleteExportRequest:
+      allOf:
+      - type: object
+        required: [OrderId, ResponseType]
+        properties:
+          OrderId: 
+            type: string
+            default: "01015202103211207420"
+            description: OCH OriginatingOrderNumber.
+          ResponseType:
+            type: string
+            default: "Confirm"
+            enum: ["Confirm", "Reject"]
+            description: Information if export requst is confirmed or rejected. 
+          ConfirmedExecutionDate:
+            type: string
+            default: ""
+            description: Information about the confirmed date that the porting will take place yyyymmddhhmmss.
+          ConfirmationStatus:
+            type: number
+            enum: [1, 2, 3, 4]
+            description: Explanation why RequestedExecutionDate cannot be kept. 
+              <br/>1 - To early according to Rules & Procedures. 
+              <br/>2 - Termination period is violated. 
+              <br/>3 - Contract period is violated. 
+              <br/>4 - Date moved due to excessive load.
+          RejectCode:
+            type: number
+            default: ""
+            description: Description of the rejection – reject code description can be found at online.och.dk. Must be set if ResponseType is Reject
+          RejectDesc:
+            type: string
+            default: ""
+            description: VIZI forstår ikke denne - spørg ChenXi.
+    
+    ModifyConfirmDateRequest:
+      allOf:
+      - type: object
+        required: [OrderId, ResponseType]
+        properties:
+          TelephoneNumber: 
+            type: string
+            default: "60501234"
+            description: Telephone number from export request.
+          NewConfirmDate:
+            type: string
+            description: NewConfirmDate yyyymmddhhmmss. 
+          ConfirmationStatus:
+            type: number
+            enum: [1, 2, 3, 4]
+            description: Explanation why RequestedExecutionDate cannot be kept. 
+              <br/>1 - To early according to Rules & Procedures. 
+              <br/>2 - Termination period is violated. 
+              <br/>3 - Contract period is violated. 
+              <br/>4 - Date moved due to excessive load.
+
+    ReturnNumberRequest:
+      allOf:
+      - type: object
+        required: [OrderId, TerminateDate, MainNumber]
+        properties:
+          OrderId: 
+            type: string
+            default: "7782546895648"
+            description: Unique order ID issued by the operator CRM system. NPGW will internally map this order ID to OriginatingOrderNumber that is issued by NPGW to OCH.
+          TerminateDate: 
+            type: string
+            default: "20220101100000"
+            description: Date of termination yyyymmddhhmmss
+          UserId: 
+            type: string
+            default: ""
+            description: ID of the user.
+          MainNumber: 
+            type: string
+            default: "39664000"
+            description: Main number.
+          NumberSeries: 
+            type: string
+            default: "1"
+            description: Number of series.
+          SeriesStart: 
+            type: string
+            default: "39664000"
+            description: Series start. Mandatory if value in NumberSeries.
+          SeriesEnd: 
+            type: string
+            default: "39664999"
+            description: Series end. Mandatory if value in NumberSeries.
+    
+    RangeUpdateRequest:
+      allOf:
+      - type: object
+        required: [OrderId, RangeUpdateType, Range, OtherOperator, CurrentRangeHolder, CurrentServiceOperator, CurrentNetworkOperator, PortingCase, RoutingInfo, ChargingInfo]
+        properties:
+          OrderId: 
+            type: string
+            default: "7782546895648"
+            description: Unique order ID issued by the operator CRM system. NPGW will internally map this order ID to OriginatingOrderNumber that is issued by NPGW to OCH.
+          RangeUpdateType: 
+            type: string
+            enum: ["I", "U", "D"]
+            default: "U"
+            description: Indicates the type of update that has to be performed.
+              <br/>I = Insert  
+              <br/>U = Update  
+              <br/>D = Delete
+          Range: 
+            type: string
+            default: "39664000-39664999"
+            description: The range about to be created or modified.
+          OtherOperator: 
+            type: string
+            default: "00002"
+            description: Operator code for the originating operator of the transaction message. Operator prefix code with leading ‘0’. This field is used to indicate who is the originator of the transaction message. The field is used in the NP Range Update to indicate who is the Range Holder of the data.
+          CurrentRangeHolder: 
+            type: string
+            default: "00002"
+            description: Specifies the operator, which takes over the Range Holder for the range.
+          CurrentServiceOperator: 
+            type: string
+            default: ""
+            description: Identification of the operator, which is current network operator on the number.
+          CurrentNetworkOperator: 
+            type: string
+            default: "01015"
+            description: Identification of the operator, which is current network operator on the number.
+          PortingCase:
+            type: string
+            default: "PortedNonGeo"
+            enum: ["PortedNonGeo", "NonPorted"]
+            description:  Indicates which signalling scenario is to be used, when sending calls to the ported number. 
+          RoutingInfo: 
+            type: string
+            default: "8195"
+            description: Information required for routing a call to this number.
+          ChargingInfo: 
+            type: string
+            default: "8195"
+            description: Information required for charging a call to this number.
+          Comment: 
+            type: string
+            default: ""
+            description: Comment field used for testing and tracking purposes.
 
     GetAccessTokenResponse:
       allOf:
